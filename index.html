@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>CheapDeals.com</title>
+<meta name="theme-color" content="#2563eb" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="icon" href="icons/icon-192.png" />
+<style>
+  :root{
+    --bg:#f6f8fb;--bg2:#f8fafc;--card:#fff;--ink:#1e293b;--muted:#64748b;--line:#e7ebf0;--heading:#0f172a;--soft:#eef4ff;
+    --brand:#2563eb;--brand-dark:#1d4ed8;--green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;
+    --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);--radius:16px;
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  html[data-theme="dark"]{--bg:#0b1220;--bg2:#0f1b2e;--card:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;--heading:#f1f5f9;--soft:#1e335c;--green-bg:#0f3320;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
+  a{color:var(--brand);text-decoration:none;cursor:pointer}
+  header.nav{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 22px;gap:10px;flex-wrap:wrap;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+  .brand{font-size:20px;font-weight:800;color:var(--heading);cursor:pointer}
+  .brand span{color:var(--brand)}
+  .nav-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+  .nav-links a{color:var(--muted);font-size:14px;font-weight:600;padding:8px 11px;border-radius:9px;transition:.18s}
+  .nav-links a:hover{background:var(--bg2);color:var(--ink)} .nav-links a.active{background:var(--soft);color:var(--brand)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .role-badge{font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:800;padding:2px 7px;border-radius:999px;margin-left:4px}
+  .role-admin{background:#fee2e2;color:#b91c1c} .role-staff{background:#dbeafe;color:#1d4ed8} .role-user{background:#dcfce7;color:#166534}
+  html[data-theme="dark"] .role-admin{background:#3f1414;color:#fca5a5} html[data-theme="dark"] .role-staff{background:#1e3a8a;color:#bfdbfe} html[data-theme="dark"] .role-user{background:#0f3320;color:#86efac}
+  .nav-right{display:flex;align-items:center;gap:9px}
+  .theme-btn{background:transparent;border:1px solid var(--line);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:15px;color:var(--ink)} .theme-btn:active{transform:scale(.9)}
+  .wrap{max-width:1080px;margin:0 auto;padding:26px 22px 70px}
+  #app.fade{animation:fadeUp .3s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .hero{background:linear-gradient(180deg,var(--card),var(--bg));border-bottom:1px solid var(--line);padding:40px 22px;text-align:center}
+  .hero h1{font-size:clamp(22px,4vw,32px);color:var(--heading);margin-bottom:6px}
+  .hero p{font-size:16px;color:var(--muted)}
+  .hero .pill{display:inline-block;background:var(--soft);color:var(--brand);font-weight:600;padding:4px 14px;border-radius:999px;font-size:13px;margin-top:12px}
+  h2.title{color:var(--heading);font-size:23px;margin:4px 0 6px}
+  p.lead{color:var(--muted);margin-bottom:14px}
+  .sec-h{color:var(--heading);font-size:17px;margin:26px 0 8px;font-weight:700}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 6px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--muted);font-weight:600;font-size:13px;padding:7px 14px;border-radius:999px;cursor:pointer;transition:.16s}
+  .chip:hover{border-color:#93c5fd} .chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .sortsel{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
+  .sortsel select{padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:var(--card);color:var(--ink);cursor:pointer}
+  .search{margin-top:14px}
+  .search input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;font-size:15px;background:var(--card);color:var(--ink)}
+  .search input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--soft)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;margin-top:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .16s;animation:fadeUp .35s ease}
+  .card:hover{transform:translateY(-4px)}
+  .card .tags{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+  .tag{font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:999px;font-weight:700}
+  .tag.cat{color:var(--brand);background:var(--soft)}
+  .tier-Lite{color:#475569;background:#e2e8f0}.tier-Standard{color:#1d4ed8;background:#dbeafe}.tier-Premium{color:#7c3aed;background:#ede9fe}.tier-Deal{color:#b45309;background:#fef3c7}
+  html[data-theme="dark"] .tier-Lite{color:#cbd5e1;background:#334155}html[data-theme="dark"] .tier-Standard{color:#bfdbfe;background:#1e3a8a}html[data-theme="dark"] .tier-Premium{color:#ddd6fe;background:#4c1d95}html[data-theme="dark"] .tier-Deal{color:#fde68a;background:#78350f}
+  .card h3{color:var(--heading);margin-bottom:2px;font-size:18px}
+  .card .price{font-size:27px;font-weight:800;color:var(--heading);margin:8px 0}
+  .card .price small{font-size:13px;font-weight:500;color:var(--muted)}
+  .card ul{list-style:none;margin:6px 0 16px;font-size:14px;color:var(--muted)}
+  .card ul li{padding-left:22px;position:relative;margin-bottom:2px}
+  .card ul li::before{content:"\2713";color:var(--green);position:absolute;left:0;font-weight:800}
+  .card .btn{margin-top:auto}
+  .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--brand);color:#fff;border:none;padding:11px 18px;border-radius:11px;font-size:15px;cursor:pointer;font-weight:600;transition:background .16s,transform .08s,box-shadow .16s}
+  .btn:hover{background:var(--brand-dark);box-shadow:0 6px 16px rgba(37,99,235,.28)} .btn:active{transform:scale(.96)}
+  .btn.sec{background:var(--bg2);color:var(--ink);border:1px solid var(--line)} .btn.sec:hover{background:var(--line);box-shadow:none}
+  .btn.ghost{background:var(--card);color:var(--brand);border:1px solid #93c5fd} .btn.ghost:hover{background:var(--soft);box-shadow:none}
+  .btn.block{width:100%} .btn.small{padding:8px 13px;font-size:13px}
+  .btn.danger{background:var(--card);color:var(--red);border:1px solid #fecaca}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:ripple .6s linear;pointer-events:none}
+  .btn.sec .ripple,.btn.ghost .ripple,.btn.danger .ripple{background:rgba(37,99,235,.25)}
+  @keyframes ripple{to{transform:scale(2.6);opacity:0}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+  .form-box{max-width:440px;margin:0 auto}
+  .fg{margin-bottom:14px}.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  .fg input,.fg select,.fg textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:var(--card);color:var(--ink)}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--soft)}
+  .fg input:disabled{background:var(--bg2);color:var(--muted)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:520px){.two-col{grid-template-columns:1fr}}
+  .foot{text-align:center;margin-top:14px;font-size:14px;color:var(--muted)}
+  .msg{padding:12px 16px;border-radius:11px;margin:0 0 14px;font-size:14px;animation:fadeUp .25s ease}
+  .msg.ok{background:var(--green-bg);color:#16a34a}.msg.err{background:#fee2e2;color:#991b1b}
+  html[data-theme="dark"] .msg.err{background:#3f1414;color:#fca5a5}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--heading);color:var(--card);padding:13px 22px;border-radius:12px;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:100;max-width:90%}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  .summary{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+  .summary .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .summary .row.total{font-size:20px;font-weight:800;color:var(--heading);border-bottom:none;margin-top:6px}
+  .discount{color:var(--green);font-weight:600}
+  .badge{display:inline-block;background:var(--green-bg);color:#16a34a;font-size:12px;padding:2px 10px;border-radius:999px;margin-left:6px;font-weight:700}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-top:12px;border:1px solid var(--line)}
+  th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+  th{background:var(--bg2);font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .crit{font-size:13px;color:var(--muted);list-style:none}.crit li{margin-bottom:3px}
+  .acc-layout{display:grid;grid-template-columns:280px 1fr;gap:22px}@media(max-width:780px){.acc-layout{grid-template-columns:1fr}}
+  .acc-side{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;align-self:start}
+  .acc-prof{padding:26px 20px;text-align:center;border-bottom:1px solid var(--line)}
+  .acc-prof .av{width:84px;height:84px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;margin:0 auto 12px}
+  .acc-prof h3{color:var(--heading);font-size:19px}.acc-prof .email{color:var(--muted);font-size:13px;margin-bottom:10px}
+  .status{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);color:#16a34a;font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px}
+  .status .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .acc-nav{padding:10px}
+  .acc-nav a{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;color:var(--ink);font-weight:600;font-size:14px;transition:.15s;margin-bottom:2px}
+  .acc-nav a:hover{background:var(--bg2);transform:translateX(2px)}.acc-nav a.active{background:var(--soft);color:var(--brand)}.acc-nav a.out{color:var(--red)}
+  .acc-main{min-width:0}
+  .acc-head{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700;color:var(--heading);padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:620px){.stats{grid-template-columns:1fr}}
+  .stat{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:center;transition:.16s}.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .stat .num{font-size:26px;font-weight:800;color:var(--heading)}.stat .num.green{color:var(--green)}.stat .lab{font-size:13px;color:var(--muted);margin-top:4px}
+  .usage-item{margin-bottom:18px}.usage-item .top{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:6px}
+  .bar{height:10px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),#60a5fa);width:0;animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards}@keyframes grow{to{width:var(--w)}}
+  .offer-banner{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-radius:12px;padding:16px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .offer-banner code{background:rgba(255,255,255,.2);padding:2px 9px;border-radius:6px;font-weight:700}
+  .hint{font-size:13px;color:var(--muted);background:var(--bg2);border-left:3px solid var(--brand);padding:10px 14px;border-radius:8px;margin:14px 0}
+  /* credit card */
+  .cc-wrap{perspective:1100px;max-width:380px;margin:0 auto 20px}
+  .cc-inner{position:relative;width:100%;aspect-ratio:1.586/1;transition:transform .6s;transform-style:preserve-3d}.cc-inner.flip{transform:rotateY(180deg)}
+  .cc{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:22px;color:#fff;box-shadow:0 14px 34px rgba(30,58,138,.45);background:linear-gradient(135deg,#1e3a8a,#2563eb 55%,#3b82f6);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+  .cc::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08);top:-90px;right:-60px}
+  .cc-top{display:flex;justify-content:space-between;align-items:center}
+  .cc-chip{width:42px;height:32px;border-radius:6px;background:linear-gradient(135deg,#f5d58a,#d4a948)}
+  .cc-brand{font-size:22px;font-weight:800;font-style:italic}
+  .cc-num{font-size:21px;letter-spacing:2px;font-family:"Consolas",monospace}
+  .cc-bot{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+  .cc-lab{font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.7}
+  .cc-bot .val{font-size:14px;text-transform:uppercase;font-weight:600;max-width:170px;overflow:hidden;white-space:nowrap}
+  .cc.back{transform:rotateY(180deg);padding:22px 0}.cc-strip{height:42px;background:#0b1220;margin:6px 0 16px}
+  .cc-cvv-row{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:0 22px}.cc-cvv{background:#fff;color:#111;padding:5px 12px;border-radius:5px;font-family:monospace;min-width:54px;text-align:center}
+  .cc .back-brand{text-align:right;padding:14px 22px 0;font-style:italic;font-weight:800;font-size:18px}
+  .thanks-check{width:88px;height:88px;border-radius:50%;background:var(--green);color:#fff;font-size:48px;display:flex;align-items:center;justify-content:center;margin:14px auto 16px;animation:pop .55s cubic-bezier(.2,1.5,.4,1)}@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1)}}
+  .confetti{position:fixed;top:-10px;width:9px;height:14px;opacity:.9;animation:fall linear forwards;z-index:90;pointer-events:none}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:0}}
+  /* tabs */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+  .tabs a{padding:10px 16px;font-weight:600;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer}
+  .tabs a.active{color:var(--brand);border-bottom-color:var(--brand)}
+  /* chat */
+  .chat{display:flex;flex-direction:column;gap:10px;max-height:440px;overflow:auto;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+  .bubble{max-width:78%;padding:9px 13px;border-radius:14px;font-size:14px;word-break:break-word}
+  .bubble .who{font-size:10px;opacity:.7;margin-bottom:2px}
+  .bubble.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+  .bubble.staff{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .chat-input{display:flex;gap:8px;margin-top:12px}
+  .chat-input input{flex:1;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+  .thread{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.15s;background:var(--card)}
+  .thread:hover{border-color:#93c5fd;transform:translateX(2px)} .thread.active{border-color:var(--brand);background:var(--soft)}
+  footer{text-align:center;padding:24px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:var(--card)}
+  /* ===== mobile bottom navigation (app style) ===== */
+  .bottom-nav{display:none}
+  @media(max-width:760px){
+    .nav-links{display:none}
+    header.nav{padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+    .wrap{padding:18px 16px 96px}
+    footer{padding-bottom:calc(24px + 64px + var(--safe-b))}
+    .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:80;background:var(--card);border-top:1px solid var(--line);
+      padding:6px 4px;padding-bottom:calc(6px + var(--safe-b));box-shadow:0 -4px 18px rgba(16,24,40,.08)}
+    .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;color:var(--muted);
+      font-size:11px;font-weight:600;border-radius:12px;transition:.15s}
+    .bottom-nav a .ic{font-size:21px;line-height:1}
+    .bottom-nav a.active{color:var(--brand)}
+    .bottom-nav a.active .ic{transform:translateY(-1px)}
+    .bottom-nav a:active{background:var(--bg2)}
+    .bottom-nav a.out{color:var(--red)}
+  }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="brand" onclick="go('home')">Cheap<span>Deals</span>.com</div>
+  <div class="nav-links" id="nav-links"></div>
+  <div class="nav-right" id="top-actions"></div>
+</header>
+<div id="app"><div class="wrap"><p class="lead">Loading…</p></div></div>
+<nav class="bottom-nav" id="bottom-nav"></nav>
+<div id="toast"></div>
+<footer>CheapDeals.com LTD &mdash; Mobile edition (COMP1807). Offline app &middot; data stored on this device.</footer>
+
+<script>
+/* ===================== client constants ===================== */
+const CATEGORIES=["All","Mobile","Broadband","Tablet","Bundles"];
+const SEGMENTS=["Mobile","Broadband","Tablet","Bundles"];
+const CUSTOM_PARTS={device:[{label:"No device",v:0},{label:"Mobile phone (+£8)",v:8},{label:"Tablet (+£10)",v:10},{label:"Router (+£6)",v:6}],minutes:[{label:"100 minutes (+£3)",v:3},{label:"500 minutes (+£5)",v:5},{label:"Unlimited (+£9)",v:9}],data:[{label:"5 GB (+£4)",v:4},{label:"20 GB (+£7)",v:7},{label:"100 GB (+£12)",v:12}]};
+const APP_DISCOUNT=0.15, OFFER_CODES={SAVE10:0.10,WELCOME5:0.05};
+let ME=null;
+
+/* ===================== helpers ===================== */
+function gbp(n){return "£"+Number(n).toFixed(2);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(()=>e.classList.remove("show"),3200);}
+
+/* =====================================================================
+   LOCAL BACKEND  (replaces the old PHP api.php + MySQL)
+   Everything below runs INSIDE the phone/browser. Data is kept in
+   localStorage so the app works completely offline, with no server.
+   The api() function keeps the SAME name and the SAME return shapes
+   that the rest of the app expects, so no other code had to change.
+   ===================================================================== */
+const DB_KEY="cd_db_v1";
+function nowStr(){const d=new Date();const p=n=>String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());}
+function seedDB(){
+  const pk=[
+    ["mob-lite","Mobile Lite","Mobile","Lite",12.00,["1 mobile phone","100 free minutes","Unlimited SMS","3 GB data"]],
+    ["mobile","Mobile Standard","Mobile","Standard",20.00,["1 mobile phone","500 free minutes","Unlimited SMS","10 GB data"]],
+    ["mob-pro","Mobile Premium","Mobile","Premium",30.00,["1 flagship phone","Unlimited minutes","Unlimited SMS","50 GB data"]],
+    ["bb-lite","Broadband Lite","Broadband","Lite",18.00,["1 Wi-Fi router","Home broadband","40 GB data"]],
+    ["broadband","Broadband Standard","Broadband","Standard",25.00,["1 Wi-Fi router","Unlimited broadband","100 GB data"]],
+    ["bb-pro","Broadband Premium","Broadband","Premium",35.00,["1 fibre router","Unlimited fibre","500 Mbps speed"]],
+    ["tab-lite","Tablet Lite","Tablet","Lite",15.00,["1 tablet device","100 free minutes","8 GB data"]],
+    ["tablet","Tablet Standard","Tablet","Standard",22.00,["1 tablet device","200 free minutes","20 GB data"]],
+    ["double","Double Bundle","Bundles","Deal",40.00,["Any TWO packages","Shared data allowance","One single bill"]],
+    ["triple","Triple Bundle","Bundles","Deal",55.00,["All THREE packages","Best value bundle","Priority support"]]
+  ];
+  const db={
+    users:[
+      {id:1,name:"Admin",email:"admin@cheapdeals.com",password:"admin123",role:"admin",address:"Head Office",phone:"0000000000",card:"0000000000000000",created_at:nowStr()},
+      {id:2,name:"Staff Member",email:"staff@cheapdeals.com",password:"staff123",role:"staff",address:"Head Office",phone:"0000000000",card:"0000000000000000",created_at:nowStr()}
+    ],
+    packages:pk.map((p,i)=>({id:i+1,code:p[0],name:p[1],category:p[2],tier:p[3],price:p[4],features:p[5],active:1})),
+    orders:[], feedback:[],
+    seq:{users:2,packages:10,orders:0,feedback:0},
+    session:null
+  };
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  return db;
+}
+function loadDB(){ try{const d=JSON.parse(localStorage.getItem(DB_KEY));return d&&d.users?d:seedDB();}catch(e){return seedDB();} }
+function saveDB(db){ localStorage.setItem(DB_KEY,JSON.stringify(db)); }
+function pubUser(u){ return u?{id:u.id,name:u.name,email:u.email,role:u.role,address:u.address,phone:u.phone,card:u.card}:null; }
+
+/* api(action, data) - drop-in replacement for the old server call.
+   "action" may carry query params, e.g. "packages&all=1" or "feedback&user_id=3". */
+async function api(action,data){
+  const parts=String(action).split("&");
+  const name=parts[0]; const q={};
+  for(let i=1;i<parts.length;i++){const kv=parts[i].split("=");q[kv[0]]=decodeURIComponent(kv[1]||"");}
+  const db=loadDB();
+  const me=db.session?db.users.find(u=>u.id===db.session):null;
+  const fail=m=>({ok:false,error:m});
+  const needLogin=()=>me?null:fail("Please log in first.");
+  const needRole=roles=>(me&&roles.indexOf(me.role)>=0)?null:fail("You are not authorised to do this.");
+  const trim=v=>String(v==null?"":v).trim();
+
+  switch(name){
+
+    case "me": return {ok:true,user:pubUser(me)};
+
+    case "register":{
+      const f=["name","email","password","address","phone","card"];
+      for(const k of f) if(!trim(data&&data[k])) return fail("Please complete all fields.");
+      if(db.users.some(u=>u.email.toLowerCase()===trim(data.email).toLowerCase())) return fail("An account with this email already exists.");
+      const id=++db.seq.users;
+      const u={id,name:trim(data.name),email:trim(data.email),password:String(data.password),role:"user",address:trim(data.address),phone:trim(data.phone),card:trim(data.card),created_at:nowStr()};
+      db.users.push(u); db.session=id; saveDB(db);
+      return {ok:true,user:pubUser(u)};
+    }
+
+    case "login":{
+      const u=db.users.find(x=>x.email.toLowerCase()===trim(data&&data.email).toLowerCase());
+      if(!u||u.password!==String((data&&data.password)||"")) return fail("Wrong email or password.");
+      db.session=u.id; saveDB(db);
+      return {ok:true,user:pubUser(u)};
+    }
+
+    case "logout": db.session=null; saveDB(db); return {ok:true};
+
+    case "updateProfile":{
+      const e=needLogin(); if(e) return e;
+      const u=db.users.find(x=>x.id===me.id); if(!u) return fail("User not found.");
+      if(trim(data&&data.name)) u.name=trim(data.name);
+      u.address=trim(data&&data.address); u.phone=trim(data&&data.phone); u.card=trim(data&&data.card);
+      saveDB(db); return {ok:true,user:pubUser(u)};
+    }
+
+    case "packages":{
+      const all=(q.all==="1")&&me&&["staff","admin"].indexOf(me.role)>=0;
+      let rows=db.packages.filter(p=>all||p.active===1);
+      rows=rows.slice().sort((a,b)=>a.category<b.category?-1:a.category>b.category?1:a.price-b.price);
+      rows=rows.map(p=>({id:p.id,code:p.code,name:p.name,category:p.category,tier:p.tier,price:Number(p.price),features:Array.isArray(p.features)?p.features:[],active:p.active?1:0}));
+      return {ok:true,packages:rows};
+    }
+
+    case "savePackage":{
+      const e=needRole(["staff","admin"]); if(e) return e;
+      const nm=trim(data.name),cat=trim(data.category),tier=trim(data.tier);
+      const price=Number(data.price)||0;
+      let features=Array.isArray(data.features)?data.features:String(data.features||"").split("\n").map(s=>s.trim()).filter(Boolean);
+      const active=data.active?1:0;
+      if(nm===""||cat===""||tier==="") return fail("Name, category and tier are required.");
+      if(data.id){
+        const p=db.packages.find(x=>String(x.id)===String(data.id));
+        if(p){p.name=nm;p.category=cat;p.tier=tier;p.price=price;p.features=features;p.active=active;}
+      } else {
+        const id=++db.seq.packages;
+        const code=trim(data.code)||("pkg-"+Math.random().toString(36).slice(2,8));
+        db.packages.push({id,code,name:nm,category:cat,tier,price,features,active});
+      }
+      saveDB(db); return {ok:true};
+    }
+
+    case "deletePackage":{
+      const e=needRole(["staff","admin"]); if(e) return e;
+      db.packages=db.packages.filter(p=>String(p.id)!==String(data&&data.id));
+      saveDB(db); return {ok:true};
+    }
+
+    case "placeOrder":{
+      const e=needLogin(); if(e) return e;
+      const id=++db.seq.orders;
+      db.orders.push({id,user_id:me.id,package_name:trim(data&&data.package_name),total:Number(data&&data.total)||0,saved:Number(data&&data.saved)||0,status:"Paid",created_at:nowStr()});
+      saveDB(db); return {ok:true};
+    }
+
+    case "orders":{
+      const e=needLogin(); if(e) return e;
+      let rows;
+      if(["staff","admin"].indexOf(me.role)>=0){
+        rows=db.orders.slice().sort((a,b)=>b.id-a.id).map(o=>{const u=db.users.find(x=>x.id===o.user_id)||{};return Object.assign({},o,{customer:u.name||"",email:u.email||""});});
+      } else {
+        rows=db.orders.filter(o=>o.user_id===me.id).slice().sort((a,b)=>b.id-a.id);
+      }
+      return {ok:true,orders:rows};
+    }
+
+    case "stats":{
+      const e=needRole(["admin"]); if(e) return e;
+      const byRole={}; db.users.forEach(u=>byRole[u.role]=(byRole[u.role]||0)+1);
+      return {ok:true,stats:{
+        users:db.users.length, customers:byRole.user||0, staff:byRole.staff||0, admins:byRole.admin||0,
+        orders:db.orders.length, revenue:db.orders.reduce((s,o)=>s+(Number(o.total)||0),0),
+        packages:db.packages.length, feedback:db.feedback.length
+      }};
+    }
+
+    case "users":{
+      const e=needRole(["admin"]); if(e) return e;
+      const rows=db.users.slice().sort((a,b)=>a.id-b.id).map(u=>({id:u.id,name:u.name,email:u.email,role:u.role,phone:u.phone,created_at:u.created_at}));
+      return {ok:true,users:rows};
+    }
+
+    case "setRole":{
+      const e=needRole(["admin"]); if(e) return e;
+      const role=data&&data.role;
+      if(["admin","staff","user"].indexOf(role)<0) return fail("Invalid role.");
+      const u=db.users.find(x=>String(x.id)===String(data.id)); if(u)u.role=role;
+      saveDB(db); return {ok:true};
+    }
+
+    case "feedbackThreads":{
+      const e=needRole(["staff","admin"]); if(e) return e;
+      const map={};
+      db.feedback.forEach(f=>{const u=db.users.find(x=>x.id===f.user_id);if(!u)return;
+        if(!map[u.id])map[u.id]={id:u.id,name:u.name,email:u.email,messages:0,last_at:""};
+        map[u.id].messages++; if(f.created_at>map[u.id].last_at)map[u.id].last_at=f.created_at;});
+      const threads=Object.values(map).sort((a,b)=>a.last_at<b.last_at?1:-1);
+      return {ok:true,threads};
+    }
+
+    case "feedback":{
+      const e=needLogin(); if(e) return e;
+      let uid;
+      if(["staff","admin"].indexOf(me.role)>=0){ uid=parseInt(q.user_id||"0",10); if(!uid) return fail("Missing user_id."); }
+      else uid=me.id;
+      const msgs=db.feedback.filter(f=>f.user_id===uid).sort((a,b)=>a.id-b.id).map(f=>({sender:f.sender,message:f.message,created_at:f.created_at}));
+      return {ok:true,messages:msgs};
+    }
+
+    case "sendFeedback":{
+      const e=needLogin(); if(e) return e;
+      const msg=trim(data&&data.message); if(msg==="") return fail("Message is empty.");
+      let uid,sender;
+      if(["staff","admin"].indexOf(me.role)>=0){ uid=parseInt((data&&data.user_id)||0,10); if(!uid) return fail("Missing user_id."); sender="staff"; }
+      else { uid=me.id; sender="user"; }
+      const id=++db.seq.feedback;
+      db.feedback.push({id,user_id:uid,sender,message:msg,created_at:nowStr()});
+      saveDB(db); return {ok:true};
+    }
+
+    default: return fail("Unknown action: "+name);
+  }
+}
+
+/* theme */
+function applyTheme(){document.documentElement.setAttribute("data-theme",localStorage.getItem("cd_theme")||"light");}
+function toggleTheme(){const n=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";localStorage.setItem("cd_theme",n);document.documentElement.setAttribute("data-theme",n);renderNav();toast(n==="dark"?"Dark mode on 🌙":"Light mode on ☀️");}
+/* ripple */
+document.addEventListener("click",e=>{const b=e.target.closest(".btn");if(!b)return;const r=b.getBoundingClientRect();const d=Math.max(r.width,r.height);const s=document.createElement("span");s.className="ripple";s.style.width=s.style.height=d+"px";s.style.left=(e.clientX-r.left-d/2)+"px";s.style.top=(e.clientY-r.top-d/2)+"px";b.appendChild(s);setTimeout(()=>s.remove(),600);});
+
+/* ===================== router ===================== */
+const ROUTES={};
+async function go(name,arg){
+  window._active=name;
+  const app=document.getElementById("app");
+  app.innerHTML='<div class="wrap"><p class="lead">Loading…</p></div>';
+  renderNav();
+  try{ await (ROUTES[name]||ROUTES.home)(app,arg); }
+  catch(e){ app.innerHTML='<div class="wrap"><div class="msg err">'+esc(e.message||"Error")+'</div></div>'; }
+  app.classList.remove("fade"); void app.offsetWidth; app.classList.add("fade");
+  window.scrollTo(0,0); renderNav();
+}
+/* nav items per role: [route, label, icon] */
+function navItems(){
+  if(!ME) return [["home","Packages","📦"],["custom","Build","🛠️"],["offers","Offers","🏷️"],["login","Login","🔑"],["register","Sign up","✍️"]];
+  if(ME.role==="user") return [["home","Packages","📦"],["custom","Build","🛠️"],["offers","Offers","🏷️"],["support","Support","💬"],["account","Account","👤"]];
+  if(ME.role==="staff") return [["home","Packages","📦"],["staff","Staff","🧰"]];
+  return [["home","Packages","📦"],["admin","Admin","🛡️"],["staff","Staff","🧰"]];
+}
+function renderNav(){
+  const a=window._active, isDark=document.documentElement.getAttribute("data-theme")==="dark";
+  const items=navItems();
+  /* top text links (desktop) */
+  document.getElementById("nav-links").innerHTML=items.map(it=>`<a class="${a===it[0]?'active':''}" onclick="go('${it[0]}')">${it[1]}</a>`).join("");
+  /* top-right actions (always visible): theme + avatar/sign out */
+  const theme=`<button class="theme-btn" onclick="toggleTheme()" title="Theme">${isDark?'☀️':'🌙'}</button>`;
+  let right=theme;
+  if(ME){
+    const badge=ME.role!=="user"?`<span class="role-badge role-${ME.role}">${ME.role}</span>`:"";
+    right+=`<span class="avatar">${esc(ME.name[0].toUpperCase())}</span>${badge}<button class="btn sec small" onclick="signout()">Sign out</button>`;
+  }
+  document.getElementById("top-actions").innerHTML=right;
+  /* bottom app nav (mobile) */
+  let bottom=items.map(it=>`<a class="${a===it[0]?'active':''}" onclick="go('${it[0]}')"><span class="ic">${it[2]}</span>${it[1]}</a>`).join("");
+  if(ME) bottom+=`<a class="out" onclick="signout()"><span class="ic">⏻</span>Out</a>`;
+  document.getElementById("bottom-nav").innerHTML=bottom;
+}
+async function signout(){ await api("logout",{}); ME=null; toast("Signed out."); go("home"); }
+function cardHTML(p){return `<div class="card">
+  <div class="tags"><span class="tag cat">${esc(p.category)}</span><span class="tag tier-${esc(p.tier)}">${esc(p.tier)}</span></div>
+  <h3>${esc(p.name)}</h3><div class="price">${gbp(p.price)} <small>/ month</small></div>
+  <ul>${(p.features||[]).map(f=>`<li>${esc(f)}</li>`).join("")}</ul>
+  <button class="btn" onclick='go("checkout",{code:${JSON.stringify(p.code)}})'>Order this</button></div>`;}
+
+/* ===================== HOME ===================== */
+let homeState={cat:"All",sort:"price-asc",q:""};
+ROUTES.home=async(app)=>{
+  const r=await api("packages"); const pkgs=r.packages||[];
+  app.innerHTML=`<div class="hero"><h1>Affordable Mobile, Tablet &amp; Broadband Deals</h1>
+    <p>Order through the app and get an automatic <strong>15% discount</strong>.</p>
+    <div class="pill">Special codes: SAVE10 &middot; WELCOME5</div></div>
+    <div class="wrap"><h2 class="title">Browse packages &amp; deals</h2>
+      <div class="toolbar"><div class="chips" id="chips">${CATEGORIES.map(c=>`<button class="chip ${homeState.cat===c?'active':''}" data-cat="${c}">${c}</button>`).join("")}</div>
+      <div class="sortsel"><span>Sort:</span><select id="sort">
+        <option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="name">Name: A to Z</option></select></div></div>
+      <div class="search"><input id="search" placeholder="Search packages..." value="${esc(homeState.q)}"></div>
+      <div id="plist"></div></div>`;
+  document.getElementById("sort").value=homeState.sort;
+  const sortFn=(a,b)=>homeState.sort==="price-asc"?a.price-b.price:homeState.sort==="price-desc"?b.price-a.price:a.name.localeCompare(b.name);
+  const draw=()=>{
+    let list=pkgs.slice();
+    if(homeState.cat!=="All") list=list.filter(p=>p.category===homeState.cat);
+    const q=homeState.q.trim().toLowerCase();
+    if(q) list=list.filter(p=>(p.name+" "+p.category+" "+p.tier+" "+(p.features||[]).join(" ")).toLowerCase().includes(q));
+    const el=document.getElementById("plist");
+    if(!list.length){el.innerHTML=`<p class="lead">No packages match your filters.</p>`;return;}
+    if(homeState.cat==="All"&&!q){
+      el.innerHTML=SEGMENTS.map(seg=>{const items=list.filter(p=>p.category===seg).sort(sortFn);return items.length?`<h3 class="sec-h">${seg}</h3><div class="grid">${items.map(cardHTML).join("")}</div>`:"";}).join("");
+    } else { el.innerHTML=`<div class="grid">${list.sort(sortFn).map(cardHTML).join("")}</div>`; }
+  };
+  document.querySelectorAll("#chips .chip").forEach(c=>c.addEventListener("click",()=>{homeState.cat=c.dataset.cat;document.querySelectorAll("#chips .chip").forEach(x=>x.classList.toggle("active",x===c));draw();}));
+  document.getElementById("sort").addEventListener("change",e=>{homeState.sort=e.target.value;draw();});
+  document.getElementById("search").addEventListener("input",e=>{homeState.q=e.target.value;draw();});
+  draw();
+};
+
+/* ===================== BUILD YOUR OWN ===================== */
+ROUTES.custom=async(app)=>{
+  app.innerHTML=`<div class="wrap"><h2 class="title">Build your own package</h2><p class="lead">Customise based on your usage, then order it.</p>
+    <div class="panel" style="max-width:560px">
+      <div class="fg"><label>Device</label><select id="c-device"></select></div>
+      <div class="fg"><label>Free minutes</label><select id="c-minutes"></select></div>
+      <div class="fg"><label>Data allowance</label><select id="c-data"></select></div>
+      <div class="summary" id="c-sum"></div>
+      <button class="btn block" id="c-order">Order this custom package</button></div></div>`;
+  const fill=(id,parts)=>document.getElementById(id).innerHTML=parts.map(p=>`<option value="${p.v}">${p.label}</option>`).join("");
+  fill("c-device",CUSTOM_PARTS.device);fill("c-minutes",CUSTOM_PARTS.minutes);fill("c-data",CUSTOM_PARTS.data);
+  const val=id=>+document.getElementById(id).value;
+  const calc=()=>{const base=10,d=val("c-device"),m=val("c-minutes"),g=val("c-data"),t=base+d+m+g;
+    document.getElementById("c-sum").innerHTML=`<div class="row"><span>Base subscription</span><span>${gbp(base)}</span></div><div class="row"><span>Device</span><span>${gbp(d)}</span></div><div class="row"><span>Minutes</span><span>${gbp(m)}</span></div><div class="row"><span>Data</span><span>${gbp(g)}</span></div><div class="row total"><span>Custom price / month</span><span>${gbp(t)}</span></div>`;
+    document.getElementById("c-sum").dataset.total=t;};
+  ["c-device","c-minutes","c-data"].forEach(id=>document.getElementById(id).addEventListener("change",calc));calc();
+  document.getElementById("c-order").addEventListener("click",()=>go("checkout",{custom:{name:"Custom Package",price:+document.getElementById("c-sum").dataset.total}}));
+};
+
+/* ===================== OFFERS ===================== */
+ROUTES.offers=async(app)=>{
+  let personal="";
+  if(ME&&ME.role==="user"){
+    const r=await api("orders"); const hasDeal=(r.orders||[]).some(o=>/Bundle|Triple|Double/.test(o.package_name));
+    const code=hasDeal?"SAVE10":"WELCOME5", txt=hasDeal?"As a multi-package customer, enjoy 10% off your next order":"New customer offer: 5% off your next order";
+    personal=`<div class="offer-banner"><div>🎁 <strong>Personalised for you:</strong> ${txt} &mdash; code <code>${code}</code></div><button class="btn small" onclick="go('checkout')">Use it now</button></div>`;
+  }
+  app.innerHTML=`<div class="wrap"><h2 class="title">Special offers</h2><p class="lead">Use these codes at checkout for an extra discount (on top of the 15% app discount).</p>${personal}
+    <div class="grid">
+      <div class="card"><div class="tags"><span class="tag cat">Save 10%</span></div><h3>SAVE10</h3><div class="price">10% <small>off</small></div><ul><li>Extra 10% off any package</li><li>Stacks with app 15%</li><li>Enter at checkout</li></ul><button class="btn ghost" onclick="go('checkout')">Order &amp; apply</button></div>
+      <div class="card"><div class="tags"><span class="tag cat">Welcome</span></div><h3>WELCOME5</h3><div class="price">5% <small>off</small></div><ul><li>Extra 5% off for new customers</li><li>Stacks with app 15%</li><li>Enter at checkout</li></ul><button class="btn ghost" onclick="go('checkout')">Order &amp; apply</button></div>
+    </div></div>`;
+};
+
+/* ===================== REGISTER / LOGIN ===================== */
+ROUTES.register=async(app)=>{
+  app.innerHTML=`<div class="wrap"><h2 class="title" style="text-align:center">Create your account</h2>
+    <div class="panel form-box"><div id="r-msg"></div>
+      <div class="fg"><label>Full name</label><input id="r-name"></div>
+      <div class="two-col"><div class="fg"><label>Email</label><input id="r-email" type="email"></div><div class="fg"><label>Password</label><input id="r-pass" type="password"></div></div>
+      <div class="fg"><label>Address</label><input id="r-addr"></div>
+      <div class="two-col"><div class="fg"><label>Telephone</label><input id="r-phone"></div><div class="fg"><label>Credit card number</label><input id="r-card" maxlength="19" placeholder="1234 5678 9012 3456"></div></div>
+      <button class="btn block" id="r-btn">Register</button>
+      <p class="foot">Already have an account? <a onclick="go('login')">Log in</a></p></div></div>`;
+  document.getElementById("r-btn").addEventListener("click",async()=>{
+    const g=id=>document.getElementById(id).value.trim();
+    const data={name:g("r-name"),email:g("r-email"),password:document.getElementById("r-pass").value,address:g("r-addr"),phone:g("r-phone"),card:g("r-card")};
+    const r=await api("register",data);
+    if(!r.ok){document.getElementById("r-msg").innerHTML=`<div class="msg err">${esc(r.error)}</div>`;return;}
+    ME=r.user; toast("Welcome to CheapDeals.com!"); go("account");
+  });
+};
+ROUTES.login=async(app)=>{
+  app.innerHTML=`<div class="wrap"><h2 class="title" style="text-align:center">Log in</h2>
+    <div class="panel form-box"><div id="l-msg"></div>
+      <div class="fg"><label>Email</label><input id="l-email" type="email"></div>
+      <div class="fg"><label>Password</label><input id="l-pass" type="password"></div>
+      <button class="btn block" id="l-btn">Log in</button>
+      <p class="foot">No account yet? <a onclick="go('register')">Register here</a></p>
+      <div class="hint">Demo logins &mdash; Admin: <b>admin@cheapdeals.com / admin123</b> &middot; Staff: <b>staff@cheapdeals.com / staff123</b>. Or register a normal user.</div></div></div>`;
+  document.getElementById("l-btn").addEventListener("click",async()=>{
+    const r=await api("login",{email:document.getElementById("l-email").value.trim(),password:document.getElementById("l-pass").value});
+    if(!r.ok){document.getElementById("l-msg").innerHTML=`<div class="msg err">${esc(r.error)}</div>`;return;}
+    ME=r.user; toast("Welcome back, "+ME.name+"!");
+    go(ME.role==="admin"?"admin":ME.role==="staff"?"staff":"account");
+  });
+};
+
+/* ===================== USER ACCOUNT ===================== */
+ROUTES.account=async(app,arg)=>{
+  if(!ME){go("login");return;}
+  const tab=(arg&&arg.tab)||"overview";
+  const r=await api("orders"); const orders=r.orders||[];
+  const side=`<aside class="acc-side"><div class="acc-prof"><div class="av">${esc(ME.name[0].toUpperCase())}</div><h3>${esc(ME.name)}</h3><div class="email">${esc(ME.email)}</div><span class="status"><span class="dot"></span> Active</span></div>
+    <nav class="acc-nav">
+      <a class="${tab==='overview'?'active':''}" onclick="go('account',{tab:'overview'})">📊 Overview</a>
+      <a class="${tab==='personal'?'active':''}" onclick="go('account',{tab:'personal'})">✏️ Personal Info</a>
+      <a class="${tab==='usage'?'active':''}" onclick="go('account',{tab:'usage'})">📈 Usage</a>
+      <a class="${tab==='billing'?'active':''}" onclick="go('account',{tab:'billing'})">💳 Billing</a>
+      <a class="${tab==='support'?'active':''}" onclick="go('support')">💬 Support</a>
+      <a class="out" onclick="signout()">⏻ Sign Out</a></nav></aside>`;
+  let body="";
+  if(tab==="overview"){
+    const saved=orders.reduce((s,o)=>s+(+o.saved||0),0), cur=orders.length?orders[0].package_name:"—";
+    body=`<div class="acc-head">📊 Account Overview</div><div class="stats">
+      <div class="stat"><div class="num">${orders.length}</div><div class="lab">Total orders</div></div>
+      <div class="stat"><div class="num green">${gbp(saved)}</div><div class="lab">Total saved</div></div>
+      <div class="stat"><div class="num" style="font-size:17px">${esc(cur)}</div><div class="lab">Current package</div></div></div>
+      <div class="hint">Every order via the app saves you 15% automatically.</div>`;
+  } else if(tab==="personal"){
+    body=`<div class="acc-head">✏️ Personal Info</div><div id="p-msg"></div>
+      <div class="fg"><label>Full name</label><input id="p-name" value="${esc(ME.name)}"></div>
+      <div class="fg"><label>Email (cannot be changed)</label><input value="${esc(ME.email)}" disabled></div>
+      <div class="fg"><label>Address</label><input id="p-addr" value="${esc(ME.address)}"></div>
+      <div class="two-col"><div class="fg"><label>Telephone</label><input id="p-phone" value="${esc(ME.phone)}"></div><div class="fg"><label>Credit card number</label><input id="p-card" maxlength="19" value="${esc(ME.card)}"></div></div>
+      <button class="btn" id="p-save">Save changes</button>
+      <div class="hint">Your profile is saved on this device.</div>`;
+  } else if(tab==="usage"){
+    let h=0; for(const ch of ME.email) h=(h*31+ch.charCodeAt(0))%1000;
+    const mins=320+h%180, sms=40+h%60, data=(4+(h%55)/10).toFixed(1);
+    const bar=(l,u,t,unit,p)=>`<div class="usage-item"><div class="top"><span>${l}</span><span>${u} / ${t} ${unit}</span></div><div class="bar"><span style="--w:${p}%"></span></div></div>`;
+    body=`<div class="acc-head">📈 Usage this month</div>${bar("Call minutes",mins,500,"min",Math.round(mins/5))}${bar("SMS",sms,100,"sms",sms)}${bar("Mobile data",data,10,"GB",Math.round(data*10))}<div class="hint">Usage is simulated for this prototype.</div>`;
+  } else { // billing
+    const hasDeal=orders.some(o=>/Bundle|Triple|Double/.test(o.package_name)), code=hasDeal?"SAVE10":"WELCOME5";
+    body=`<div class="acc-head">💳 Billing &amp; orders</div><div class="offer-banner"><div>🎁 Your offer code: <code>${code}</code></div><button class="btn small" onclick="go('checkout')">Pay / order now</button></div>
+      ${orders.length?`<div class="table-scroll"><table><thead><tr><th>Date</th><th>Package</th><th>Saved</th><th>Total paid</th><th>Status</th></tr></thead><tbody>${orders.map(o=>`<tr><td>${esc((o.created_at||"").slice(0,10))}</td><td>${esc(o.package_name)}</td><td class="discount">${gbp(o.saved)}</td><td>${gbp(o.total)}</td><td>${esc(o.status)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="lead">No orders yet. <a onclick="go('home')">Browse packages</a>.</p>`}`;
+  }
+  app.innerHTML=`<div class="wrap"><div class="acc-layout">${side}<section class="acc-main"><div class="panel">${body}</div></section></div></div>`;
+  if(tab==="personal"){
+    document.getElementById("p-save").addEventListener("click",async()=>{
+      const r=await api("updateProfile",{name:document.getElementById("p-name").value.trim(),address:document.getElementById("p-addr").value.trim(),phone:document.getElementById("p-phone").value.trim(),card:document.getElementById("p-card").value.trim()});
+      if(r.ok){ME=r.user;document.getElementById("p-msg").innerHTML=`<div class="msg ok">Profile saved.</div>`;toast("Profile updated.");renderNav();}
+      else document.getElementById("p-msg").innerHTML=`<div class="msg err">${esc(r.error)}</div>`;
+    });
+  }
+};
+
+/* ===================== SUPPORT CHAT (user) ===================== */
+ROUTES.support=async(app)=>{
+  if(!ME){go("login");return;}
+  app.innerHTML=`<div class="wrap"><h2 class="title">💬 Support</h2><p class="lead">Chat with our staff. Ask about packages, billing or anything else.</p>
+    <div class="panel" style="max-width:640px"><div id="chat" class="chat"></div>
+      <div class="chat-input"><input id="msg" placeholder="Type your message..."><button class="btn" id="send">Send</button></div></div></div>`;
+  async function refresh(){
+    const r=await api("feedback"); const box=document.getElementById("chat");
+    box.innerHTML=(r.messages||[]).length?r.messages.map(m=>`<div class="bubble ${m.sender}"><div class="who">${m.sender==='user'?'You':'Staff'}</div>${esc(m.message)}</div>`).join(""):`<p class="lead" style="margin:10px">No messages yet. Say hello! 👋</p>`;
+    box.scrollTop=box.scrollHeight;
+  }
+  async function send(){
+    const i=document.getElementById("msg"); const t=i.value.trim(); if(!t) return;
+    const r=await api("sendFeedback",{message:t}); if(r.ok){i.value="";refresh();} else toast(r.error);
+  }
+  document.getElementById("send").addEventListener("click",send);
+  document.getElementById("msg").addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+  refresh();
+};
+
+/* ===================== CHECKOUT + VISA card ===================== */
+ROUTES.checkout=async(app,arg)=>{
+  if(!ME){toast("Please log in to place an order.");go("login");return;}
+  if(ME.role!=="user"){app.innerHTML=`<div class="wrap"><div class="msg err">Staff/Admin accounts cannot place customer orders. Log in as a customer.</div></div>`;return;}
+  arg=arg||{};
+  const r=await api("packages"); let opts=(r.packages||[]).map(p=>({code:p.code,name:p.name,price:p.price}));
+  if(arg.custom) opts=[{code:"custom",name:arg.custom.name,price:arg.custom.price},...opts];
+  app.innerHTML=`<div class="wrap"><h2 class="title">Checkout</h2>
+    <div class="panel" style="max-width:600px"><div id="co-msg"></div>
+      <div class="fg"><label>Choose a package / deal</label><select id="co-pkg">${opts.map(p=>`<option value="${esc(p.code)}" data-name="${esc(p.name)}" data-price="${p.price}">${esc(p.name)} - ${gbp(p.price)}/mo</option>`).join("")}</select></div>
+      <div class="fg"><label>Special offer code (optional)</label><input id="co-offer" placeholder="e.g. SAVE10"></div>
+      <div class="summary" id="co-sum"></div>
+      <div class="acc-head" style="font-size:16px">💳 Pay by card <span class="badge">VISACheck secured</span></div>
+      <div class="cc-wrap"><div class="cc-inner" id="cc-inner">
+        <div class="cc front"><div class="cc-top"><span class="cc-chip"></span><span class="cc-brand">VISA</span></div>
+          <div class="cc-num" id="cc-num">•••• •••• •••• ••••</div>
+          <div class="cc-bot"><div><div class="cc-lab">Card holder</div><div class="val" id="cc-name">FULL NAME</div></div><div><div class="cc-lab">Expires</div><div class="val" id="cc-exp">MM/YY</div></div></div></div>
+        <div class="cc back"><div class="cc-strip"></div><div class="cc-cvv-row"><span class="cc-lab">CVV</span><span class="cc-cvv" id="cc-cvv-disp">•••</span></div><div class="back-brand">VISA</div></div>
+      </div></div>
+      <div class="fg"><label>Name on card</label><input id="co-cn" value="${esc(ME.name)}"></div>
+      <div class="fg"><label>Card number</label><input id="co-num" maxlength="19" inputmode="numeric" value="${esc(ME.card)}" placeholder="1234 5678 9012 3456"></div>
+      <div class="two-col"><div class="fg"><label>Expiry (MM/YY)</label><input id="co-exp" maxlength="5" placeholder="08/27"></div><div class="fg"><label>CVV</label><input id="co-cvv" maxlength="3" inputmode="numeric" placeholder="123"></div></div>
+      <button class="btn block" id="co-pay">Pay now</button>
+      <div class="hint">Only credit card payment is accepted. The card is verified by "VISACheck".</div></div></div>`;
+  const sel=document.getElementById("co-pkg"); if(arg.code&&opts.some(o=>o.code===arg.code)) sel.value=arg.code; if(arg.custom) sel.value="custom";
+  const offer=document.getElementById("co-offer"), sum=document.getElementById("co-sum");
+  const calc=()=>{const o=sel.options[sel.selectedIndex],name=o.dataset.name,base=+o.dataset.price,appD=base*APP_DISCOUNT,code=offer.value.trim().toUpperCase(),rate=OFFER_CODES[code]||0,offD=base*rate,total=base-appD-offD;
+    let row=""; if(code) row=rate?`<div class="row"><span>Offer (${code})</span><span class="discount">- ${gbp(offD)}</span></div>`:`<div class="row"><span>Offer (${code})</span><span style="color:#dc2626">invalid code</span></div>`;
+    sum.innerHTML=`<div class="row"><span>${esc(name)}</span><span>${gbp(base)}</span></div><div class="row"><span>App discount (15%)</span><span class="discount">- ${gbp(appD)}</span></div>${row}<div class="row total"><span>Total to pay</span><span>${gbp(total)}</span></div>`;
+    sum.dataset.total=total.toFixed(2);sum.dataset.name=name;sum.dataset.saved=(appD+offD).toFixed(2);};
+  sel.addEventListener("change",calc);offer.addEventListener("input",calc);calc();
+  /* live card */
+  const num=document.getElementById("co-num"),cn=document.getElementById("co-cn"),exp=document.getElementById("co-exp"),cvv=document.getElementById("co-cvv");
+  const ccNum=document.getElementById("cc-num"),ccName=document.getElementById("cc-name"),ccExp=document.getElementById("cc-exp"),ccCvv=document.getElementById("cc-cvv-disp"),ccInner=document.getElementById("cc-inner");
+  const fmt=v=>v.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim();
+  const showNum=()=>{const d=num.value.replace(/\D/g,"");let out="";for(let i=0;i<16;i++)out+=(i<d.length?d[i]:"•")+((i+1)%4===0&&i<15?" ":"");ccNum.textContent=out;};
+  num.addEventListener("input",()=>{num.value=fmt(num.value);showNum();});
+  cn.addEventListener("input",()=>ccName.textContent=cn.value.trim()?cn.value.toUpperCase():"FULL NAME");
+  exp.addEventListener("input",()=>{let v=exp.value.replace(/\D/g,"").slice(0,4);if(v.length>=3)v=v.slice(0,2)+"/"+v.slice(2);exp.value=v;ccExp.textContent=v||"MM/YY";});
+  cvv.addEventListener("input",()=>ccCvv.textContent=cvv.value?cvv.value.replace(/./g,"•"):"•••");
+  cvv.addEventListener("focus",()=>ccInner.classList.add("flip"));cvv.addEventListener("blur",()=>ccInner.classList.remove("flip"));
+  num.value=fmt(num.value);showNum();ccName.textContent=cn.value?cn.value.toUpperCase():"FULL NAME";
+  document.getElementById("co-pay").addEventListener("click",async()=>{
+    const digits=num.value.replace(/\D/g,""),msg=document.getElementById("co-msg");
+    if(digits.length<12||cvv.value.length!==3){msg.innerHTML=`<div class="msg err">VISACheck declined the card. Check the number and CVV.</div>`;window.scrollTo(0,0);return;}
+    const res=await api("placeOrder",{package_name:sum.dataset.name,total:+sum.dataset.total,saved:+sum.dataset.saved});
+    if(!res.ok){msg.innerHTML=`<div class="msg err">${esc(res.error)}</div>`;return;}
+    toast("Payment successful — receipt emailed.");
+    go("thanks",{name:ME.name,email:ME.email,packageName:sum.dataset.name,total:+sum.dataset.total,saved:+sum.dataset.saved});
+  });
+};
+
+/* ===================== THANK YOU ===================== */
+ROUTES.thanks=async(app,o)=>{
+  if(!o){go("home");return;}
+  app.innerHTML=`<div class="wrap" style="text-align:center"><div class="thanks-check">✓</div>
+    <h2 class="title" style="text-align:center">Thank you, ${esc(o.name)}! 🎉</h2>
+    <p class="lead">Your payment was successful. A receipt has been emailed to ${esc(o.email)}.</p>
+    <div class="panel" style="max-width:420px;margin:6px auto 18px;text-align:left"><div class="summary" style="margin:0;border:none;background:transparent">
+      <div class="row"><span>Package</span><span>${esc(o.packageName)}</span></div>
+      <div class="row"><span>You saved</span><span class="discount">${gbp(o.saved)}</span></div>
+      <div class="row total"><span>Total paid</span><span>${gbp(o.total)}</span></div></div></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn" onclick="go('account',{tab:'billing'})">View my orders</button><button class="btn sec" onclick="go('home')">Continue shopping</button></div></div>`;
+  const colors=["#2563eb","#16a34a","#f59e0b","#ec4899","#8b5cf6"];
+  for(let i=0;i<70;i++){const c=document.createElement("div");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.animationDuration=(2+Math.random()*2)+"s";c.style.animationDelay=(Math.random()*.6)+"s";document.body.appendChild(c);setTimeout(()=>c.remove(),4600);}
+};
+
+/* ===================== STAFF PANEL ===================== */
+ROUTES.staff=async(app,arg)=>{
+  if(!ME||(ME.role!=="staff"&&ME.role!=="admin")){go("login");return;}
+  const tab=(arg&&arg.tab)||"packages";
+  const tabBar=`<div class="tabs">
+    <a class="${tab==='packages'?'active':''}" onclick="go('staff',{tab:'packages'})">📦 Manage packages</a>
+    <a class="${tab==='feedback'?'active':''}" onclick="go('staff',{tab:'feedback'})">💬 Feedback</a>
+    <a class="${tab==='orders'?'active':''}" onclick="go('staff',{tab:'orders'})">🧾 Orders</a></div>`;
+  app.innerHTML=`<div class="wrap"><h2 class="title">Staff Panel</h2><p class="lead">Change prices, add options, and answer customer feedback.</p>${tabBar}<div id="staff-body"></div></div>`;
+  const bodyEl=document.getElementById("staff-body");
+  if(tab==="packages"){ await staffPackages(bodyEl); }
+  else if(tab==="feedback"){ await staffFeedback(bodyEl); }
+  else { await staffOrders(bodyEl); }
+};
+async function staffPackages(el){
+  const r=await api("packages&all=1"); const pkgs=r.packages||[];
+  el.innerHTML=`<button class="btn" id="add-pkg" style="margin-bottom:14px">+ Add new option</button>
+    <div class="table-scroll"><table><thead><tr><th>Name</th><th>Category</th><th>Tier</th><th>Price (£)</th><th>Active</th><th>Actions</th></tr></thead>
+    <tbody>${pkgs.map(p=>`<tr>
+      <td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${esc(p.tier)}</td>
+      <td><input type="number" step="0.01" value="${p.price}" data-id="${p.id}" class="price-in" style="width:90px;padding:6px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)"></td>
+      <td>${p.active?'Yes':'No'}</td>
+      <td><button class="btn small save-price" data-id="${p.id}">Save price</button> <button class="btn small danger del-pkg" data-id="${p.id}">Delete</button></td>
+    </tr>`).join("")}</tbody></table></div><div id="pkg-form"></div>`;
+  el.querySelectorAll(".save-price").forEach(b=>b.addEventListener("click",async()=>{
+    const id=b.dataset.id; const p=pkgs.find(x=>String(x.id)===String(id));
+    const price=+el.querySelector(`.price-in[data-id="${id}"]`).value;
+    const r=await api("savePackage",{id,name:p.name,category:p.category,tier:p.tier,price,features:p.features,active:p.active});
+    toast(r.ok?"Price updated.":r.error);
+  }));
+  el.querySelectorAll(".del-pkg").forEach(b=>b.addEventListener("click",async()=>{
+    if(!confirm("Delete this package?"))return; const r=await api("deletePackage",{id:b.dataset.id});
+    if(r.ok){toast("Deleted.");go("staff",{tab:"packages"});} else toast(r.error);
+  }));
+  document.getElementById("add-pkg").addEventListener("click",()=>{
+    document.getElementById("pkg-form").innerHTML=`<div class="panel" style="max-width:520px;margin-top:16px"><h3 class="sec-h" style="margin-top:0">New option</h3>
+      <div class="fg"><label>Name</label><input id="np-name"></div>
+      <div class="two-col"><div class="fg"><label>Category</label><select id="np-cat">${SEGMENTS.map(s=>`<option>${s}</option>`).join("")}</select></div>
+        <div class="fg"><label>Tier</label><select id="np-tier"><option>Lite</option><option>Standard</option><option>Premium</option><option>Deal</option></select></div></div>
+      <div class="fg"><label>Price (£/month)</label><input id="np-price" type="number" step="0.01" value="20"></div>
+      <div class="fg"><label>Features (one per line)</label><textarea id="np-feat" rows="3" placeholder="1 mobile phone&#10;500 free minutes"></textarea></div>
+      <button class="btn" id="np-save">Create option</button></div>`;
+    document.getElementById("np-save").addEventListener("click",async()=>{
+      const r=await api("savePackage",{name:document.getElementById("np-name").value.trim(),category:document.getElementById("np-cat").value,tier:document.getElementById("np-tier").value,price:+document.getElementById("np-price").value,features:document.getElementById("np-feat").value,active:1});
+      if(r.ok){toast("Option created.");go("staff",{tab:"packages"});} else toast(r.error);
+    });
+  });
+}
+async function staffFeedback(el){
+  const r=await api("feedbackThreads"); const threads=r.threads||[];
+  el.innerHTML=`<div class="acc-layout"><aside><div class="panel" style="padding:14px"><h3 class="sec-h" style="margin:0 0 10px">Conversations</h3><div id="threads">${threads.length?threads.map(t=>`<div class="thread" data-id="${t.id}"><div><strong>${esc(t.name)}</strong><div style="font-size:12px;color:var(--muted)">${esc(t.email)}</div></div><span class="badge">${t.messages}</span></div>`).join(""):`<p class="lead">No conversations yet.</p>`}</div></div></aside>
+    <section class="acc-main"><div class="panel"><div id="thread-chat"><p class="lead">Select a conversation to reply.</p></div></div></section></div>`;
+  el.querySelectorAll(".thread").forEach(t=>t.addEventListener("click",()=>{el.querySelectorAll(".thread").forEach(x=>x.classList.toggle("active",x===t));openThread(t.dataset.id);}));
+  async function openThread(uid){
+    const box=document.getElementById("thread-chat");
+    const r=await api("feedback&user_id="+uid);
+    box.innerHTML=`<div class="chat" id="schat">${(r.messages||[]).map(m=>`<div class="bubble ${m.sender}"><div class="who">${m.sender==='user'?'Customer':'You (staff)'}</div>${esc(m.message)}</div>`).join("")||'<p class="lead" style="margin:10px">No messages.</p>'}</div>
+      <div class="chat-input"><input id="sreply" placeholder="Type a reply..."><button class="btn" id="ssend">Reply</button></div>`;
+    const c=document.getElementById("schat"); c.scrollTop=c.scrollHeight;
+    async function send(){const i=document.getElementById("sreply");const t=i.value.trim();if(!t)return;const rr=await api("sendFeedback",{user_id:uid,message:t});if(rr.ok){i.value="";openThread(uid);}else toast(rr.error);}
+    document.getElementById("ssend").addEventListener("click",send);
+    document.getElementById("sreply").addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+  }
+}
+async function staffOrders(el){
+  const r=await api("orders"); const orders=r.orders||[];
+  el.innerHTML=orders.length?`<div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer</th><th>Email</th><th>Package</th><th>Total</th><th>Status</th></tr></thead><tbody>${orders.map(o=>`<tr><td>${esc((o.created_at||"").slice(0,10))}</td><td>${esc(o.customer||"")}</td><td>${esc(o.email||"")}</td><td>${esc(o.package_name)}</td><td>${gbp(o.total)}</td><td>${esc(o.status)}</td></tr>`).join("")}</tbody></table></div>`:`<p class="lead">No orders yet.</p>`;
+}
+
+/* ===================== ADMIN PANEL ===================== */
+ROUTES.admin=async(app,arg)=>{
+  if(!ME||ME.role!=="admin"){go("login");return;}
+  const tab=(arg&&arg.tab)||"overview";
+  const tabBar=`<div class="tabs">
+    <a class="${tab==='overview'?'active':''}" onclick="go('admin',{tab:'overview'})">📊 Overview</a>
+    <a class="${tab==='users'?'active':''}" onclick="go('admin',{tab:'users'})">👥 Users &amp; roles</a></div>`;
+  app.innerHTML=`<div class="wrap"><h2 class="title">Admin Panel</h2><p class="lead">Full control: see everyone using the system, all orders, and manage roles. Admin can also use the Staff Panel.</p>${tabBar}<div id="admin-body"></div></div>`;
+  const el=document.getElementById("admin-body");
+  if(tab==="overview"){
+    const r=await api("stats"); const s=r.stats||{};
+    el.innerHTML=`<div class="stats" style="margin-bottom:14px">
+      <div class="stat"><div class="num">${s.users||0}</div><div class="lab">Total accounts</div></div>
+      <div class="stat"><div class="num">${s.customers||0}</div><div class="lab">Customers (users)</div></div>
+      <div class="stat"><div class="num">${s.orders||0}</div><div class="lab">Total orders</div></div></div>
+      <div class="stats">
+      <div class="stat"><div class="num green">${gbp(s.revenue||0)}</div><div class="lab">Total revenue</div></div>
+      <div class="stat"><div class="num">${s.staff||0}</div><div class="lab">Staff members</div></div>
+      <div class="stat"><div class="num">${s.feedback||0}</div><div class="lab">Feedback messages</div></div></div>
+      <div class="hint">There are ${s.packages||0} packages on sale. Go to the Staff Panel to manage prices, options and feedback.</div>`;
+  } else {
+    const r=await api("users"); const users=r.users||[];
+    el.innerHTML=`<div class="table-scroll"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Change role</th></tr></thead>
+      <tbody>${users.map(u=>`<tr><td>${u.id}</td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.phone)}</td>
+        <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+        <td><select class="role-sel" data-id="${u.id}" style="padding:6px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)">
+          ${["user","staff","admin"].map(rl=>`<option value="${rl}" ${rl===u.role?'selected':''}>${rl}</option>`).join("")}</select></td></tr>`).join("")}</tbody></table></div>
+      <div class="hint">Changing a role takes effect next time that person loads a page.</div>`;
+    el.querySelectorAll(".role-sel").forEach(s=>s.addEventListener("change",async()=>{
+      const r=await api("setRole",{id:s.dataset.id,role:s.value}); toast(r.ok?"Role updated.":r.error); if(r.ok) go("admin",{tab:"users"});
+    }));
+  }
+};
+
+/* ===================== boot ===================== */
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{})); }
+(async function boot(){
+  applyTheme();
+  const r=await api("me"); ME=(r&&r.ok)?r.user:null;
+  go("home");
+})();
+</script>
+</body>
+</html>
